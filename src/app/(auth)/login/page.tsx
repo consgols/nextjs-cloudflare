@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/logo';
 
+export const runtime = 'edge';
+
 const Login = () => {
   const [state, action] = useActionState(login, undefined);
   return (

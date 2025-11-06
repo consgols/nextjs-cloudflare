@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 import React from 'react';
 import { NextRequest } from 'next/server';
 import { renderToStream, Font, type DocumentProps } from '@react-pdf/renderer';

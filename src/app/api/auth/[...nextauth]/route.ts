@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 

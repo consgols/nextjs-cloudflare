@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
 import { cleanUploadsFolder } from '@/app/lib/utils/files';
 
