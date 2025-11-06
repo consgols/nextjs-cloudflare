@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { getCollection } from '@/lib/database/db';
 import getAuthUser from '@/lib/database/getAuthUser';
 import { ObjectId } from 'mongodb';

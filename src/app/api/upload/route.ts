@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 // app/api/upload/route.ts
 import { NextResponse } from 'next/server';
 import { mkdir, writeFile, access } from 'fs/promises';
@@ -5,8 +7,6 @@ import { constants } from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import sharp from 'sharp';
-
-export const runtime = 'nodejs'; // sharp requires Node runtime
 
 const TARGET_BYTES = 2 * 1024 * 1024; // 2 MB
 const BACKGROUND_COLOR = '#ffffff'; // used to flatten transparent images to JPG

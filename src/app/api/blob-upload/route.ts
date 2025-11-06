@@ -1,9 +1,9 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import sharp from 'sharp';
 import { put, head } from '@vercel/blob'; // 👈 only need these now
-
-export const runtime = 'nodejs'; // sharp needs Node runtime
 
 const TARGET_BYTES = 1 * 1024 * 1024; // 1 MB
 const BACKGROUND_COLOR = '#ffffff'; // flatten transparent images to JPG
