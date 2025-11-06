@@ -1,36 +1,11 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
-  "name": "nextjs-cloudflare-app",
+  "name": "my-app",
   "compatibility_date": "2025-03-25",
-  "compatibility_flags": [
-    "nodejs_compat",
-    // Optional but handy when you fetch third-party APIs during SSR/route handlers:
-    "global_fetch_strictly_public"
-  ],
-
-  // Static assets emitted by OpenNext (public/, .next/static, etc.)
-  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-
-  // Self-binding used by OpenNext for internal fetches (image optimizer, revalidate, etc.)
-  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "nextjs-cloudflare-app" }],
-
-  // Plain env vars (non-secret). Good place for feature flags, etc.
-  // Put secrets (tokens, DB URIs) via `wrangler secret put`.
-  "vars": {
-    // NextAuth needs this if you rely on dynamic host detection
-    "AUTH_TRUST_HOST": "true"
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
   }
-
-  // ↓ Uncomment and wire things as you adopt CF storage:
-  // "r2_buckets": [
-  //   { "binding": "R2_PUBLIC", "bucket_name": "public-assets" },
-  //   { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "next-inc-cache" }
-  // ],
-  // "d1_databases": [
-  //   { "binding": "DB", "database_name": "app-db", "database_id": "xxxx-xxxx" }
-  // ],
-  // "kv_namespaces": [
-  //   { "binding": "KV_CACHE", "id": "xxxxxxxxxxxxxxxxxxxxx" }
-  // ]
 }
