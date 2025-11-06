@@ -7,5 +7,21 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "APPLICATION_CLIENT_ID": "691fe150-0261-459a-8dec-fcf999961d98",
+    "DIRECTORY_TENANT_ID": "17191e81-857a-4080-81a2-7ea2401b34c1",
+    "CLIENT_SECRECT": "b8cec681-23a9-4949-bf65-6a46170382a5",
+    "DOMAIN": "avensiaab.onmicrosoft.com",
+    "INSTANCE": "https://login.microsoftonline.com/{0}",
+    "CALLBACKPATH": "/signin-oidc",
+    "SCOPES": "User.Read",
+    "NEXTAUTH_SECRET": "123",
+    "NEXTAUTH_URL": "http://localhost:44385/",
+    "PORT": "44385",
+    "DB_URI": "mongodb+srv://dbUser:tadodo123@cluster0.wfzit7x.mongodb.net/?retryWrites:true&w:majority&appName:Cluster0",
+    "SESSION_SECRET_KEY": "fi35VYPbaO6CY0pDhKi/ttzsaLV2303X5pbh+yIQj8Q:",
+    "DB_NAME": "avensia_cv_generator_db_dev",
+    "BLOB_READ_WRITE_TOKEN": "vercel_blob_rw_StOUIR41WRSem46b_P9fkKA7xic5ysrxQ96YR1vHl1Bxwjn"
   }
 }

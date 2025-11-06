@@ -6,7 +6,7 @@ import { useLoader } from '@/app/context/LoaderContext';
 export function useFormEvents(initialData: CvData & { _id?: string | ObjectId }) {
   const { saveCv } = useCv({ initialData });
   const [formState, setFormState] = useState<CvData>(initialData);
-  const [cvId, setCvId] = useState<string>(initialData._id?.toString() ?? '');
+  const [cvId, setCvId] = useState<string>(initialData?._id?.toString() ?? '');
   const [imgPreviewUrl, setImgPreviewUrl] = useState<string | null>(null);
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [isSaveSuccess, setSaveSuccess] = useState<{ status: boolean; id: string; errorMessage?: string }>({

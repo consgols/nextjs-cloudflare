@@ -73,7 +73,7 @@ export default function CVFormPage({ initialForm }: { initialForm: CvWithId }) {
               </>
             )}
           </Button>
-          <Button variant="secondary" onClick={handleGeneratePDF} className="w-50" disabled={!initialForm._id}>
+          <Button variant="secondary" onClick={handleGeneratePDF} className="w-50" disabled={!initialForm?._id}>
             <FileText /> Generate CV as PDF
           </Button>
           <LogoutAlert />

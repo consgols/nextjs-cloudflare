@@ -3,7 +3,7 @@
 import { getCollection } from '@/lib/database/db';
 import { LoginFormSchema, RegisterFormSchema } from '@/lib/database/rules';
 import { createSession } from '@/lib/database/session';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -84,9 +84,10 @@ export async function login(state: unknown, formData: FormData): Promise<AuthRes
   if (!matchPassword) return { errors: { email: [], password: ['invalid password'] }, email };
 
   //If the user is not saved successfully, return an error.
-  await createSession(existingUser._id.toString());
+  await createSession(existingUser?._id.toString());
 
   //Redirect to the dashboard page after successful registration.
+  console.log('login');
   redirect('/createcv');
 }
 
