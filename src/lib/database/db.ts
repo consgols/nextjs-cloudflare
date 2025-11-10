@@ -17,14 +17,15 @@
 import 'server-only'; // Ensures this module is only executed on the server
 import { MongoClient, Db, ServerApiVersion } from 'mongodb';
 import type { Document } from 'mongodb'; // Provides typing support for collections/documents
+import { env } from 'cloudflare:workers';
 
 //Load MongoDB URI from environment variables
-const uri = process.env.DB_URI!;
+const uri = env.DB_URI!;
 // Throw an error if the URI is not found (helps catch setup issues early)
 if (!uri) throw new Error('Mongo URI not found!');
 
 // Name of the MongoDB database to connect to
-const DB_NAME = 'avensia_cv_generator_db';
+const DB_NAME = env.DB_NAME;
 
 //Type definition for the Mongo cache structure
 type MongoCache = {
