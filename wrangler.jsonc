@@ -1,20 +1,24 @@
 {
-	"$schema": "./node_modules/wrangler/config-schema.json",
-	"main": ".open-next/worker.js",
-	"name": "avensia-cv-tools",
-	"compatibility_date": "2025-03-25",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
-	"assets": {
-		"directory": ".open-next/assets",
-		"binding": "ASSETS"
-	},
-	"d1_databases": [
-		{
-			"binding": "cvs",
-			"database_name": "cv",
-			"database_id": "0262b86d-ece5-470a-aa50-4f30220aca9f"
-		}
-	]
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "avensia-cv-tools",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "BLOB_READ_WRITE_TOKEN": "vercel_blob_rw_StOUIR41WRSem46b_P9fkKA7xic5ysrxQ96YR1vHl1Bxwjn",
+    "DB_NAME": "avensia_cv_generator_db",
+    "DB_URI": "mongodb+srv://dbUser:tadodo123@cluster0.wfzit7x.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    "SESSION_SECRET_KEY": "fi35VYPbaO6CY0pDhKi/ttzsaLV2303X5pbh+yIQj8Q="
+  },
+  "d1_databases": [
+    {
+      "binding": "cvs",
+      "database_name": "cv",
+      "database_id": "0262b86d-ece5-470a-aa50-4f30220aca9f"
+    }
+  ]
 }
