@@ -29,6 +29,8 @@ export function useFormEvents(initialData: CvData & { _id?: string | ObjectId })
         const res = await fetch('/api/blob-upload', { method: 'POST', body });
         if (!res.ok) throw new Error('Image upload failed');
         const data = await res.json();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         imgUrl = data.url;
       }
 

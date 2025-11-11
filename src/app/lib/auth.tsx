@@ -1,6 +1,6 @@
 'use server';
 
-import { getCollection } from '@/lib/database/db';
+import { getDB } from '@/lib/database/d1db';
 import { LoginFormSchema, RegisterFormSchema } from '@/lib/database/rules';
 import { createSession } from '@/lib/database/session';
 import bcrypt from 'bcryptjs';
@@ -17,6 +17,14 @@ export type AuthResponseType = {
   message?: string;
 };
 
+type UserType = {
+  UserID: number;
+  UserEmail: string;
+  UserPassword: string;
+};
+
+const db = getDB();
+
 export async function register(state: unknown, formData: FormData): Promise<AuthResponseType> {
   //Validates form fields using zod.
   const validatedFields = RegisterFormSchema.safeParse({
@@ -32,14 +40,9 @@ export async function register(state: unknown, formData: FormData): Promise<Auth
   //If validation succeeds, extract the email and password from the validated fields.
   const { email, password } = validatedFields.data;
 
-  //Connect to the MongoDB database and get the users collection.
-  const userCollection = await getCollection('users');
-
-  //Check if the user already exists in the database.
-  if (!userCollection) return { errors: { email: 'Server Error!', password: [], confirmPassword: [] }, email };
-
   //Check if the email already exists in the database.
-  const existingUser = await userCollection?.findOne({ email });
+  const existingUser = await db.prepare('SELECT UserEmail from Users WHERE UserEmail = ?').bind(email).first();
+
   if (existingUser) return { errors: { email: 'Email already exists!', password: [], confirmPassword: [] }, email };
 
   //Hash the password before saving it to the database
@@ -47,9 +50,7 @@ export async function register(state: unknown, formData: FormData): Promise<Auth
   const hashedPassword = await bcrypt.hash(password, salt);
 
   // Save the new user to the database.
-  await userCollection?.insertOne({ email, password: hashedPassword });
-
-  //return { message: 'User created successfully!', errors: {}, email: '' };
+  await db.prepare('INSERT INTO Users (UserEmail, UserPassword) VALUES (?1, ?2)').bind(email, hashedPassword).run();
 
   redirect('/createcv');
 }
@@ -68,23 +69,18 @@ export async function login(state: unknown, formData: FormData): Promise<AuthRes
   //If validation succeeds, extract the email and password from the validated fields.
   const { email, password } = validatedFields.data;
 
-  //Connect to the MongoDB database and get the users collection.
-  const userCollection = await getCollection('users');
-
-  //Check if the user already exists in the database.rror!', password: [], confirmPassword: [] }, email };
-  if (!userCollection) return { errors: { email: ['Server Error!'], password: [] }, email };
-
   //Check if the email already exists in the database.
-  const existingUser = await userCollection?.findOne({ email });
+  const existingUser = await db.prepare('SELECT * FROM Users WHERE UserEmail = ?').bind(email).first<UserType>();
+
   if (!existingUser) return { errors: { email: ['Email not registered'], password: [] }, email };
 
   //Compare the password with the hashed password in the database.
-  const matchPassword = await bcrypt.compare(password, existingUser.password);
+  const matchPassword = await bcrypt.compare(password, existingUser.UserPassword);
 
   if (!matchPassword) return { errors: { email: [], password: ['invalid password'] }, email };
 
   //If the user is not saved successfully, return an error.
-  await createSession(existingUser?._id.toString());
+  await createSession(existingUser?.UserID.toString());
 
   //Redirect to the dashboard page after successful registration.
   console.log('login');

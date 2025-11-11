@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS Cvs;
+CREATE TABLE IF NOT EXISTS Cvs (CvID INTEGER PRIMARY KEY AUTOINCREMENT, FullName TEXT, ImgDataUrl TEXT, Position TEXT, Email TEXT, LinkedIn TEXT, Phone TEXT, About TEXT, Education TEXT, Projects TEXT, Skills TEXT, Certificates TEXT, WorkExperience TEXT, UserID TEXT);
+INSERT INTO Cvs (FullName, ImgDataUrl, Position, Email, LinkedIn, Phone, About, Education, Projects, Skills, Certificates, WorkExperience, UserID) VALUES ('Juan Dela Cruz', '', 'Frontend Developer', 'juandelacruz@gmail.com', '', '+639275088990', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu felis vulputate', '', '','', '', '', '2');
