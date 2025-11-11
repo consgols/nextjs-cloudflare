@@ -25,66 +25,78 @@ type UserType = {
 
 const db = getDB();
 
-export async function register(state: unknown, formData: FormData): Promise<AuthResponseType> {
-  //Validates form fields using zod.
-  const validatedFields = RegisterFormSchema.safeParse({
+export async function register(_: unknown, formData: FormData): Promise<AuthResponseType> {
+  //  Validate input via Zod
+  const validated = RegisterFormSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
     confirmPassword: formData.get('confirmPassword'),
   });
 
-  //If validation fails, return the errors and the email field value.
-  if (!validatedFields.success)
-    return { errors: validatedFields.error.flatten().fieldErrors, email: formData.get('email')?.toString() };
+  if (!validated.success) {
+    return {
+      errors: validated.error.flatten().fieldErrors,
+      email: formData.get('email')?.toString(),
+    };
+  }
 
-  //If validation succeeds, extract the email and password from the validated fields.
-  const { email, password } = validatedFields.data;
+  const { email, password } = validated.data;
 
-  //Check if the email already exists in the database.
-  const existingUser = await db.prepare('SELECT UserEmail from Users WHERE UserEmail = ?').bind(email).first();
+  // Check if user already exists
+  const existingUser = await db
+    .prepare('SELECT 1 FROM Users WHERE UserEmail = ? LIMIT 1')
+    .bind(email)
+    .first<UserType>();
 
-  if (existingUser) return { errors: { email: 'Email already exists!', password: [], confirmPassword: [] }, email };
+  if (existingUser) {
+    return {
+      errors: { email: 'Email already exists!', password: [], confirmPassword: [] },
+      email,
+    };
+  }
 
-  //Hash the password before saving it to the database
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  // Hash password (bcrypt.hash already handles salt)
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Save the new user to the database.
-  await db.prepare('INSERT INTO Users (UserEmail, UserPassword) VALUES (?1, ?2)').bind(email, hashedPassword).run();
+  //  Save new user
+  await db.prepare('INSERT INTO Users (UserEmail, UserPassword) VALUES (?, ?)').bind(email, hashedPassword).run();
 
+  // Redirect to dashboard
   redirect('/createcv');
 }
 
-export async function login(state: unknown, formData: FormData): Promise<AuthResponseType> {
-  //Validates form fields using zod.
-  const validatedFields = LoginFormSchema.safeParse({
+export async function login(_: unknown, formData: FormData): Promise<AuthResponseType> {
+  const validated = LoginFormSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
   });
 
-  //If validation fails, return the errors and the email field value.
-  if (!validatedFields.success)
-    return { errors: validatedFields.error.flatten().fieldErrors, email: formData.get('email')?.toString() };
+  if (!validated.success) {
+    return {
+      errors: validated.error.flatten().fieldErrors,
+      email: formData.get('email')?.toString(),
+    };
+  }
 
-  //If validation succeeds, extract the email and password from the validated fields.
-  const { email, password } = validatedFields.data;
+  const { email, password } = validated.data;
 
-  //Check if the email already exists in the database.
-  const existingUser = await db.prepare('SELECT * FROM Users WHERE UserEmail = ?').bind(email).first<UserType>();
+  // Only fetch what you need; ensure the query can use an index on UserEmail
+  const user = await db
+    .prepare('SELECT UserID, UserPassword FROM Users WHERE UserEmail = ? LIMIT 1')
+    .bind(email)
+    .first<UserType>();
 
-  if (!existingUser) return { errors: { email: ['Email not registered'], password: [] }, email };
+  if (!user) {
+    return { errors: { email: ['Email not registered'], password: [] }, email };
+  }
 
-  //Compare the password with the hashed password in the database.
-  const matchPassword = await bcrypt.compare(password, existingUser.UserPassword);
+  const ok = await bcrypt.compare(password, user.UserPassword);
+  if (!ok) {
+    return { errors: { email: [], password: ['invalid password'] }, email };
+  }
 
-  if (!matchPassword) return { errors: { email: [], password: ['invalid password'] }, email };
-
-  //If the user is not saved successfully, return an error.
-  await createSession(existingUser?.UserID.toString());
-
-  //Redirect to the dashboard page after successful registration.
-  console.log('login');
-  redirect('/createcv');
+  await createSession(String(user.UserID));
+  redirect('/createcv'); // never returns
 }
 
 export async function logout() {
