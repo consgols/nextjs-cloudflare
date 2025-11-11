@@ -1,3 +1,4 @@
+import { getDB } from '@/lib/database/d1db';
 import { getCollection } from '@/lib/database/db';
 import getAuthUser from '@/lib/database/getAuthUser';
 import { ObjectId } from 'mongodb';
@@ -29,39 +30,35 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  console.log('CV GET ');
+  const db = getDB();
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const col = await getCollection<CvData & { createdAt: Date; updatedAt: Date; userId: ObjectId }>('cvs');
-
+    const queryStm = db.prepare('SELECT * FROM Cvs WHERE UserID = ?');
     // Check if an id param was provided
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (id) {
-      const doc = await col.findOne({ _id: new ObjectId(id), userId: new ObjectId(user.userId) });
-      if (!doc) {
+      const result = await queryStm.bind(id).first<CvData>();
+      if (!result) {
         return NextResponse.json({ error: 'CV not found or not owned by user' }, { status: 404 });
       }
-      return NextResponse.json(doc, { status: 200 });
+      return NextResponse.json(result, { status: 200 });
     }
 
     // Otherwise: just get the single CV for this user (most recent one if multiple exist)
-    const doc = await col.findOne(
-      { userId: new ObjectId(user.userId) },
-      {
-        sort: { createdAt: -1 },
-      },
-    );
+    const result = await queryStm.bind(user.userId).first<CvData>();
 
-    if (!doc) {
+    if (!result) {
       return NextResponse.json({ error: 'No CV found for this user' }, { status: 404 });
     }
 
-    return NextResponse.json(doc, { status: 200 });
+    return NextResponse.json(result, { status: 200 });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: 'Failed to fetch CV' }, { status: 500 });
